@@ -78,7 +78,7 @@ API Link: https://www.alphavantage.co/
 
 ## Author
 
-Jatsay
+Jatasay
 
 ---
 
