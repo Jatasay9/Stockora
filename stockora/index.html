@@ -9,12 +9,24 @@
 
   <h1>📊 Stockora</h1>
 
-
-  <input type="text" id="searchInput" placeholder="Enter stock symbol (e.g. TATA.BSE)">
+  <!-- Search Section -->
+  <input type="text" id="searchInput" placeholder="Enter stock symbol (e.g. AAPL)">
   <button id="searchBtn">Search</button>
 
+  <br><br>
 
+  <!-- Sorting -->
+  <button onclick="sortByPrice()">Sort by Price</button>
+  <button onclick="sortByChange()">Sort by Change</button>
+
+  <!-- Filtering -->
+  <button onclick="showGainers()">Gainers</button>
+  <button onclick="showLosers()">Losers</button>
+
+  <!-- Results -->
   <div id="result"></div>
+  <div id="error" style="color: red;"></div>
+
 
   <script src="script.js"></script>
 </body>
