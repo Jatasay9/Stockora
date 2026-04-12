@@ -1,16 +1,15 @@
-const API_KEY = "PUJWNKW9U2WIYQ5X";
-
+const API_KEY = "d7dst6pr01qmm59ed9n0d7dst6pr01qmm59ed9ng"; // Free Finnhub key
 const searchBtn = document.getElementById("searchBtn");
 const resultDiv = document.getElementById("result");
+const errorDiv = document.getElementById("error");
 
 let stocks = [];
 
-// Search Button Click
 searchBtn.addEventListener("click", async () => {
   const symbol = document.getElementById("searchInput").value.trim().toUpperCase();
 
   if (!symbol) {
-    alert("Please enter a stock symbol");
+    errorDiv.innerHTML = `<p>Input not found</p>`;
     return;
   }
 
@@ -22,45 +21,45 @@ searchBtn.addEventListener("click", async () => {
   }
 });
 
-// Fetch Stock Data
 async function getStockData(symbol) {
-  const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
+  const url = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`;
 
   try {
     resultDiv.innerHTML = "Loading...";
+    errorDiv.innerHTML = "";
 
     const response = await fetch(url);
     const data = await response.json();
     console.log(data);
 
-    const stock = data["Global Quote"];
-
-    if (!stock || Object.keys(stock).length === 0) {
-      alert("No data found");
+    if (!data || data.c === 0) {
+      errorDiv.innerHTML = `<p>Data Not Found. Check the symbol.</p>`;
+      resultDiv.innerHTML = "";
       return null;
     }
 
+    const change = data.c - data.pc;
+    const changePct = ((change / data.pc) * 100).toFixed(2) + "%";
+
     return {
-      symbol: stock["01. symbol"],
-      price: parseFloat(stock["05. price"]),
-      change: stock["10. change percent"]
+      symbol: symbol,
+      price: data.c.toFixed(2), 
+      change: changePct        
     };
 
   } catch (error) {
-    alert("Error fetching data");
+    console.error(error);
+    errorDiv.innerHTML = `<p>API not fetching. Try again.</p>`;
+    resultDiv.innerHTML = "";
     return null;
   }
-  
 }
 
-// Display Stocks
 function displayStocks(stockList) {
   resultDiv.innerHTML = "";
 
   stockList.forEach(stock => {
     const div = document.createElement("div");
-
-    // Color based on gain/loss
     const color = parseFloat(stock.change) > 0 ? "green" : "red";
 
     div.innerHTML = `
@@ -74,7 +73,6 @@ function displayStocks(stockList) {
   });
 }
 
-// Sorting
 function sortByPrice() {
   const sorted = [...stocks].sort((a, b) => a.price - b.price);
   displayStocks(sorted);
@@ -87,7 +85,6 @@ function sortByChange() {
   displayStocks(sorted);
 }
 
-// Filtering
 function showGainers() {
   const gainers = stocks.filter(stock => parseFloat(stock.change) > 0);
   displayStocks(gainers);
